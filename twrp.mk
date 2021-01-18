@@ -1,0 +1,106 @@
+#
+# Copyright (C) 2020 The LineageOS Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+###########################################################
+### TWRP RECOVERY
+###########################################################
+
+# Do not go full treble for recovery
+PRODUCT_FULL_TREBLE_OVERRIDE := false
+
+RECOVERY_VARIANT := twrp
+
+#BOARD_NEEDS_VENDORIMAGE_SYMLINK := false
+TARGET_COPY_OUT_VENDOR := vendor
+
+### INIT
+# Use rootdir/init.recovery.usb.rc
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TARGET_RECOVERY_DEVICE_MODULES := init.recovery.usb.rc
+
+### KERNEL
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+
+# Install kernel modules to root directory
+NEED_KERNEL_MODULE_ROOT := true
+
+### RECOVERY
+BOARD_HAS_DOWNLOAD_MODE := true
+TARGET_RECOVERY_PIXEL_FORMAT := "ABGR_8888"
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/twrp.fstab
+
+### TWRP
+
+# Add logcat support
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD := true
+
+# Do not set up legacy properties
+TW_NO_LEGACY_PROPS := true
+
+# Use toolbox instead of busybox
+TW_USE_TOOLBOX := true
+
+# Does not allow to partition the sdcard
+BOARD_HAS_NO_REAL_SDCARD := true
+# Media on data partition
+RECOVERY_SDCARD_ON_DATA := true
+
+### ENCRYPTED FILESYSTEMS
+TW_INCLUDE_CRYPTO := true
+# ext4 file based crypto
+TW_INCLUDE_CRYPTO_FBE := true
+
+### SAMSUNG
+TW_NO_REBOOT_BOOTLOADER := true
+TW_HAS_DOWNLOAD_MODE := true
+
+### DEPENDENCIES
+TARGET_RECOVERY_DEVICE_MODULES      += init.recovery.exynos9611
+
+# GATEKEEPER
+TARGET_RECOVERY_DEVICE_MODULES      += android.hardware.gatekeeper@1.0-impl
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_VENDOR_SHARED_LIBRARIES)/hw/android.hardware.gatekeeper@1.0-impl.so
+
+TARGET_RECOVERY_DEVICE_MODULES      += android.hardware.gatekeeper@1.0-service
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/hw/android.hardware.gatekeeper@1.0-service
+
+# KEYMASTER
+TARGET_RECOVERY_DEVICE_MODULES      += android.hardware.keymaster@4.0-service.samsung
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/hw/android.hardware.keymaster@4.0-service.samsung
+
+TARGET_RECOVERY_DEVICE_MODULES      += libkeymaster4
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_VENDOR_SHARED_LIBRARIES)/libkeymaster4.so
+
+TARGET_RECOVERY_DEVICE_MODULES      += libpuresoftkeymasterdevice
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
+
+# TZTS_DAEMON
+TARGET_RECOVERY_DEVICE_MODULES      += libuuid
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libuuid.so
+
+# STRACE
+TARGET_RECOVERY_DEVICE_MODULES      += strace
+TW_RECOVERY_ADDITIONAL_RELINK_FILES += $(TARGET_OUT_EXECUTABLES)/strace
+
+### F2FS SUPPORT
+TARGET_USERIMAGES_USE_F2FS := true
+
+### TWRP FEATURES
+TW_EXCLUDE_SUPERSU := true
+
+TW_THEME := portrait_hdpi
+
